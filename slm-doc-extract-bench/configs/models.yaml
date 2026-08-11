@@ -1,0 +1,119 @@
+# Model registry for SLM Document Extraction Benchmark
+#
+# Two families are compared side by side:
+#   family: multimodal  -> the model reads the document image directly (VLM)
+#   family: text_ocr    -> an OCR engine reads the document first, then a
+#                          text-only SLM extracts fields from the OCR text
+#
+# `backend` selects how the model is actually run locally:
+#   - transformers : HuggingFace transformers, loaded on CPU/GPU/MPS
+#   - ollama       : calls a local Ollama server (http://localhost:11434)
+#   - llama_cpp    : GGUF weights via llama-cpp-python
+#
+# Add a new model by adding an entry here — no code changes needed unless
+# the backend itself is new (see docs/ADDING_A_MODEL.md).
+
+multimodal:
+  - id: smolvlm2-2.2b
+    backend: ollama
+    ollama_tag: richardyoung/smolvlm2-2.2b-instruct:Q6_K
+    params: 2.2B
+    notes: Smallest practical VLM, good baseline for low-resource hardware.
+
+  - id: smolvlm2-500m
+    backend: transformers
+    hf_repo: HuggingFaceTB/SmolVLM2-500M-Video-Instruct
+    params: 500M
+    notes: Extreme-efficiency baseline, expect weaker structured extraction.
+
+  - id: moondream2
+    backend: transformers
+    hf_repo: vikhyatk/moondream2
+    params: ~1.9B
+    notes: Fast, decent OCR-ish grounding, useful lower bound.
+
+  - id: internvl3-2b
+    backend: transformers
+    hf_repo: OpenGVLab/InternVL3-2B
+    params: 2B
+    notes: MIT-licensed, strong doc understanding for its size.
+
+  - id: internvl3-8b
+    backend: transformers
+    hf_repo: OpenGVLab/InternVL3-8B
+    params: 8B
+    notes: Upper end of what we still call "small" — good ceiling reference.
+
+  - id: qwen2.5-vl-3b
+    backend: ollama
+    ollama_tag: qwen2.5vl:3b
+    params: 3B
+    notes: Strong OCR + layout understanding, widely used baseline.
+
+  - id: qwen2.5-vl-7b
+    backend: ollama
+    ollama_tag: qwen2.5vl:7b
+    params: 7B
+    notes: Ceiling reference within the "small" bracket.
+
+  - id: qwen3-vl-4b
+    backend: transformers
+    hf_repo: Qwen/Qwen3-VL-4B-Instruct
+    params: 4B
+    notes: Check availability/tag — fast-moving release, verify before running.
+
+  - id: phi-4-multimodal
+    backend: transformers
+    hf_repo: microsoft/Phi-4-multimodal-instruct
+    params: ~5.6B
+    notes: Mixture-of-LoRAs; strong general SLM, verify vision-mode support.
+
+  - id: deepseek-ocr
+    backend: transformers
+    hf_repo: deepseek-ai/DeepSeek-OCR
+    params: ~3B
+    notes: >
+      Not a chatbot (no SFT) — evaluate separately as an OCR/layout-parsing
+      engine rather than an instruction-following extractor. Very strong at
+      table/structure parsing.
+
+text_ocr:
+  ocr_engines:
+    - id: tesseract
+      backend: pytesseract
+      notes: Zero-cost baseline, weak on noisy scans.
+    - id: paddleocr
+      backend: paddleocr
+      notes: Generally the best free OCR for tables/multilingual docs.
+    - id: easyocr
+      backend: easyocr
+      notes: Good middle ground, simpler install than PaddleOCR.
+
+  slms:
+    - id: qwen2.5-0.5b
+      backend: ollama
+      ollama_tag: qwen2.5:0.5b
+      params: 0.5B
+    - id: qwen2.5-3b
+      backend: ollama
+      ollama_tag: qwen2.5:3b
+      params: 3B
+    - id: gemma3-1b
+      backend: ollama
+      ollama_tag: gemma3:1b
+      params: 1B
+    - id: gemma3-4b
+      backend: ollama
+      ollama_tag: gemma3:4b
+      params: 4B
+    - id: phi-4-mini
+      backend: transformers
+      hf_repo: microsoft/Phi-4-mini-instruct
+      params: ~3.8B
+    - id: llama3.2-3b
+      backend: ollama
+      ollama_tag: llama3.2:3b
+      params: 3B
+
+# Every (ocr_engine x slm) pair is run by default; restrict with
+# `slmbench run --ocr paddleocr --slm phi-4-mini` if you only want one pair.

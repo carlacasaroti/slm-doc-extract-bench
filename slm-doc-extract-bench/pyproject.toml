@@ -1,0 +1,54 @@
+[project]
+name = "slmbench"
+version = "0.1.0"
+description = "Benchmark and reusable pipeline for document extraction with Small Language Models (multimodal VLMs vs OCR+text SLMs), runnable fully locally."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "your-name-here" }]
+
+dependencies = [
+    "pyyaml>=6.0",
+    "pydantic>=2.6",
+    "typer>=0.12",
+    "rich>=13.7",
+    "requests>=2.31",
+    "Pillow>=10.2",
+    "faker>=24.0",
+]
+
+[project.optional-dependencies]
+transformers = [
+    "torch>=2.2",
+    "transformers>=4.45",
+    "accelerate>=0.30",
+    "einops>=0.8",
+]
+ocr = [
+    "pytesseract>=0.3.10",
+    "paddleocr>=2.7",
+    "paddlepaddle>=2.6",
+    "easyocr>=1.7",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5",
+]
+all = ["slmbench[transformers,ocr,dev]"]
+
+[project.scripts]
+slmbench = "slmbench.cli:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

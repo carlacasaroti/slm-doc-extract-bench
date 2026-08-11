@@ -1,0 +1,90 @@
+# Dataset registry — multi-domain document extraction
+#
+# Each dataset maps to a `task` defined in configs/tasks.yaml, which in turn
+# defines the target JSON schema the extractor must fill in.
+#
+# `loader` points to the module in src/slmbench/datasets/loaders that knows
+# how to parse that specific dataset's raw format into the common
+# `DocumentSample` structure (see src/slmbench/datasets/base.py).
+#
+# License/access notes are included because some of these require manual
+# registration (e.g. via RRC / Kaggle) before the download script can pull
+# them — see docs/ADDING_A_DATASET.md and scripts/download_datasets.py.
+
+datasets:
+  - id: sroie2019
+    domain: receipts
+    task: receipt_key_info
+    loader: sroie
+    source: https://rrc.cvc.uab.es/?ch=13
+    license: research-use (registration required)
+    n_samples: ~1000
+    notes: Classic receipt KIE benchmark — company, date, address, total.
+
+  - id: cord
+    domain: receipts
+    task: receipt_line_items
+    loader: cord
+    source: https://github.com/clovaai/cord
+    license: CC BY 4.0
+    n_samples: ~1000
+    notes: Indonesian receipts with full line-item + totals structure.
+
+  - id: funsd
+    domain: forms
+    task: form_key_value
+    loader: funsd
+    source: https://guillaumejaume.github.io/FUNSD/
+    license: research-use
+    n_samples: 199
+    notes: Noisy scanned forms, key-value + entity linking.
+
+  - id: xfund
+    domain: forms
+    task: form_key_value
+    loader: xfund
+    source: https://github.com/doc-analysis/XFUND
+    license: CC BY-NC-SA 4.0
+    n_samples: ~1900 (7 languages)
+    notes: Multilingual forms — useful if you want PT/other-language coverage.
+
+  - id: docile
+    domain: invoices
+    task: invoice_fields
+    loader: docile
+    source: https://github.com/rossumai/docile
+    license: research-use (registration required)
+    n_samples: ~6700 annotated + 100k+ unlabeled
+    notes: Large, realistic invoice IE benchmark, closest to production data.
+
+  - id: docvqa
+    domain: general
+    task: document_qa
+    loader: docvqa
+    source: https://www.docvqa.org/
+    license: research-use
+    n_samples: ~12000 images / ~50000 QA pairs
+    notes: >
+      Question-answering rather than fixed-schema extraction — used here to
+      test general document comprehension, not just field extraction.
+
+  - id: kleister_nda
+    domain: contracts
+    task: contract_entities
+    loader: kleister
+    source: https://github.com/applicaai/kleister-nda
+    license: CC BY 4.0
+    n_samples: ~540
+    notes: Long documents (NDAs) — good stress test for context length.
+
+  - id: synthetic_invoices_ptbr
+    domain: invoices
+    task: invoice_fields
+    loader: synthetic
+    source: generated locally via scripts/generate_synthetic_docs.py
+    license: n/a (generated)
+    n_samples: configurable
+    notes: >
+      Templated PT-BR invoices/receipts with known ground truth — useful for
+      controlled ablations (rotation, noise, font, layout perturbations)
+      without depending on external downloads.
