@@ -1,21 +1,20 @@
-# Virtual environments
+__pycache__/
+*.pyc
 .venv/
 venv/
-env/
+*.egg-info/
+build/
+dist/
 
-# Python cache
-__pycache__/
-*.py[cod]
+# raw datasets are large / license-restricted — never commit them
+data/raw/
 
-# Environment variables / secrets
+# benchmark outputs are regenerated per run; keep the repo light
+results/*.json
+!results/leaderboard.md
+
 .env
-.env.*
-
-# macOS
 .DS_Store
-
-# VS Code
+.idea/
 .vscode/
-
-# Jupyter
-.ipynb_checkpoints/
+*.log
