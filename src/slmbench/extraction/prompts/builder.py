@@ -9,7 +9,6 @@ paper over by hand-tuning its prompt.
 from __future__ import annotations
 
 import json
-from typing import Any
 
 from slmbench.extraction.schema import get_task
 

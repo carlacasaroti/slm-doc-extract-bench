@@ -53,5 +53,11 @@ where = ["src"]
 line-length = 100
 target-version = "py310"
 
+[tool.ruff.lint]
+# B008 (function-call-in-default-argument) is a deliberate false positive
+# for Typer CLIs — typer.Option(...) as a parameter default is exactly
+# how Typer is designed to be used, not a mutable-default footgun.
+ignore = ["B008"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

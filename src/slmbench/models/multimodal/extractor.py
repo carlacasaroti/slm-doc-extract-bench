@@ -44,7 +44,7 @@ class MultimodalExtractor(BaseExtractor):
         )
 
     @classmethod
-    def from_config(cls, entry: dict[str, Any]) -> "MultimodalExtractor":
+    def from_config(cls, entry: dict[str, Any]) -> MultimodalExtractor:
         """Build an extractor from one entry of configs/models.yaml['multimodal']."""
         kwargs = {k: v for k, v in entry.items() if k not in {"id", "backend", "params", "notes"}}
         return cls(model_id=entry["id"], backend=entry["backend"], **kwargs)

@@ -151,5 +151,5 @@ def _percentile(values: list[float], p: float) -> float:
     if not values:
         return 0.0
     values = sorted(values)
-    idx = int(round(p * (len(values) - 1)))
+    idx = round(p * (len(values) - 1))
     return values[idx]

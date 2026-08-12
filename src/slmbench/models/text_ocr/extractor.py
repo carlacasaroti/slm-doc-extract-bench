@@ -46,7 +46,7 @@ class TextOCRExtractor(BaseExtractor):
         )
 
     @classmethod
-    def from_config(cls, slm_entry: dict[str, Any], ocr_engine: str) -> "TextOCRExtractor":
+    def from_config(cls, slm_entry: dict[str, Any], ocr_engine: str) -> TextOCRExtractor:
         """Build an extractor from one `slms` entry + one OCR engine id."""
         kwargs = {
             k: v for k, v in slm_entry.items() if k not in {"id", "backend", "params", "notes"}
