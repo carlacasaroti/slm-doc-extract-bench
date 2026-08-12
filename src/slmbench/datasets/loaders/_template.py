@@ -17,6 +17,7 @@ def load(
     split: str,
     limit: int | None,
     dataset_id: str,
+    task_id: str,
 ) -> list[DocumentSample]:
     """Parse this dataset's raw files into normalized DocumentSample objects.
 
@@ -28,10 +29,15 @@ def load(
         limit: If set, return at most this many samples (for fast iteration).
         dataset_id: Passed through so DocumentSample.dataset_id is set
             correctly without hardcoding it in every loader.
+        task_id: The task registered for this dataset in
+            configs/datasets.yaml (`task:` field) — set DocumentSample.task_id
+            to this rather than hardcoding a task name, so the same loader
+            can be reused with a different (e.g. reduced) schema by
+            registering a second dataset entry pointing at the same loader
+            with a different `task:`. See synthetic.py for an example.
 
     Returns:
         A list of DocumentSample, each with `ground_truth` shaped to match
-        the JSON schema declared for this dataset's `task` in
-        configs/tasks.yaml.
+        the JSON schema declared for `task_id` in configs/tasks.yaml.
     """
     raise NotImplementedError("Implement load() for this dataset.")

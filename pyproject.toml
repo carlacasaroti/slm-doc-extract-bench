@@ -34,7 +34,10 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.5",
 ]
-all = ["slmbench[transformers,ocr,dev]"]
+viz = [
+    "matplotlib>=3.8",
+]
+all = ["slmbench[transformers,ocr,dev,viz]"]
 
 [project.scripts]
 slmbench = "slmbench.cli:app"

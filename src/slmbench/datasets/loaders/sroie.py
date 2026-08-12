@@ -24,6 +24,7 @@ def load(
     split: str,
     limit: int | None,
     dataset_id: str,
+    task_id: str,
 ) -> list[DocumentSample]:
     img_dir = raw_dir / "img"
     entities_dir = raw_dir / "entities"
@@ -55,7 +56,7 @@ def load(
             DocumentSample(
                 sample_id=f"{dataset_id}/{stem}",
                 dataset_id=dataset_id,
-                task_id="receipt_key_info",
+                task_id=task_id,
                 image_path=image_path,
                 ground_truth=ground_truth,
             )

@@ -10,7 +10,7 @@ dist/
 data/raw/
 
 # benchmark outputs are regenerated per run; keep the repo light
-results/*.json
+results/*
 !results/leaderboard.md
 
 .env

@@ -21,6 +21,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 from slmbench.datasets.base import DocumentSample
+from slmbench.extraction.schema import get_schema
 
 try:
     from faker import Faker
@@ -35,12 +36,24 @@ def load(
     split: str,
     limit: int | None,
     dataset_id: str,
+    task_id: str,
 ) -> list[DocumentSample]:
     n = limit or 50
     raw_dir.mkdir(parents=True, exist_ok=True)
+    schema_fields = set(get_schema(task_id)["properties"].keys())
 
     samples: list[DocumentSample] = []
-    rng = random.Random(42 if split == "test" else 1)
+    seed = 42 if split == "test" else 1
+    rng = random.Random(seed)
+    if _fake is not None:
+        # Faker keeps its OWN internal random state, entirely separate from
+        # the `rng` above — without this, two independent load() calls
+        # (e.g. synthetic_invoices_ptbr then synthetic_invoices_ptbr_reduced)
+        # would each continue from wherever Faker's shared RNG last left
+        # off, producing DIFFERENT names/dates/CNPJs even with the same
+        # `seed`. Reseeding here is what makes every dataset that reuses
+        # this loader generate byte-identical underlying documents.
+        _fake.seed_instance(seed)
 
     for i in range(n):
         sample_id = f"{dataset_id}/{split}_{i:04d}"
@@ -48,16 +61,22 @@ def load(
         gt_path = raw_dir / f"{split}_{i:04d}.json"
 
         if image_path.exists() and gt_path.exists():
-            ground_truth = json.loads(gt_path.read_text(encoding="utf-8"))
+            full_ground_truth = json.loads(gt_path.read_text(encoding="utf-8"))
         else:
-            ground_truth = _generate_invoice_image(image_path, rng)
-            gt_path.write_text(json.dumps(ground_truth, ensure_ascii=False, indent=2))
+            full_ground_truth = _generate_invoice_image(image_path, rng)
+            gt_path.write_text(json.dumps(full_ground_truth, ensure_ascii=False, indent=2))
+
+        # Filter to only the fields this task's schema actually asks for —
+        # this is what lets synthetic_invoices_ptbr_reduced reuse the exact
+        # same generated documents while only scoring/prompting a subset of
+        # fields (see configs/tasks.yaml::invoice_fields_reduced).
+        ground_truth = {k: v for k, v in full_ground_truth.items() if k in schema_fields}
 
         samples.append(
             DocumentSample(
                 sample_id=sample_id,
                 dataset_id=dataset_id,
-                task_id="invoice_fields",
+                task_id=task_id,
                 image_path=image_path,
                 ground_truth=ground_truth,
                 metadata={"synthetic": True},
@@ -65,6 +84,63 @@ def load(
         )
 
     return samples
+
+
+def _load_fonts() -> tuple[ImageFont.FreeTypeFont, ImageFont.FreeTypeFont]:
+    """Try a handful of common TTF locations across macOS/Linux/CI before
+    giving up. A missing TrueType font silently degrades to PIL's tiny
+    bitmap default font, which is nearly unreadable at this resolution —
+    that would tank every extractor's score for reasons that have nothing
+    to do with the model being evaluated, so we warn loudly if it happens.
+    """
+    candidates = [
+        # Linux (matches the Dockerfile, which installs fonts-dejavu-core)
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        # macOS
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        # Generic — works if the font happens to be on PIL's search path
+        "DejaVuSans.ttf",
+        "Arial.ttf",
+    ]
+
+    def _first_working(names: list[str], size: int):
+        for name in names:
+            try:
+                return ImageFont.truetype(name, size)
+            except OSError:
+                continue
+        return None
+
+    font = _first_working(
+        [c for c in candidates if "Bold" not in c and "bold" not in c], 20
+    )
+    font_bold = _first_working(
+        [c for c in candidates if "Bold" in c or "bold" in c], 24
+    ) or font
+
+    if font is None:
+        import warnings
+
+        warnings.warn(
+            "No TrueType font found for the synthetic document generator — "
+            "falling back to PIL's tiny bitmap default font. Generated "
+            "documents will likely be unreadable to any extractor, which "
+            "will look like a model failure but is actually a rendering "
+            "problem. Install a TTF (e.g. `apt install fonts-dejavu-core` "
+            "on Linux, or point _load_fonts() at a font you have on macOS) "
+            "and regenerate the dataset.",
+            stacklevel=2,
+        )
+        try:
+            font = ImageFont.load_default(size=20)
+            font_bold = ImageFont.load_default(size=24)
+        except TypeError:  # older Pillow without the `size` kwarg
+            font = font_bold = ImageFont.load_default()
+
+    return font, font_bold
 
 
 def _generate_invoice_image(out_path: Path, rng: random.Random) -> dict:
@@ -92,12 +168,7 @@ def _generate_invoice_image(out_path: Path, rng: random.Random) -> dict:
 
     img = Image.new("RGB", (800, 1000), color="white")
     draw = ImageDraw.Draw(img)
-    try:
-        font = ImageFont.truetype("DejaVuSans.ttf", 20)
-        font_bold = ImageFont.truetype("DejaVuSans-Bold.ttf", 24)
-    except OSError:
-        font = ImageFont.load_default()
-        font_bold = font
+    font, font_bold = _load_fonts()
 
     lines = [
         (f"FATURA / INVOICE {invoice_number}", font_bold),

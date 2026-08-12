@@ -56,7 +56,10 @@ tasks:
       required: [fields]
 
   invoice_fields:
-    description: Extract standard invoice header, party, and totals fields.
+    description: >
+      Extract standard invoice header, party, and totals fields. For
+      `currency`, normalize whatever symbol or code appears on the document
+      to its ISO 4217 code (e.g. "R$" -> "BRL", "$" -> "USD", "€" -> "EUR").
     schema:
       type: object
       properties:
@@ -71,6 +74,103 @@ tasks:
         tax_amount: { type: number }
         total_amount: { type: number }
       required: [invoice_number, vendor_name, total_amount]
+
+  invoice_fields_reduced:
+    description: >
+      Extract ONLY these 5 fields from the invoice — do not return any other
+      field. This is a controlled-experiment variant of `invoice_fields`,
+      used to test whether small models drop these specific fields because
+      they're genuinely hard to extract, or because they get deprioritized
+      when competing with 5 other fields in the same schema.
+    schema:
+      type: object
+      properties:
+        issue_date: { type: string }
+        vendor_tax_id: { type: string }
+        customer_name: { type: string }
+        subtotal: { type: number }
+        tax_amount: { type: number }
+      required: [issue_date, vendor_tax_id, customer_name, subtotal, tax_amount]
+
+  # --- Field-count degradation curve -----------------------------------
+  # invoice_fields_2 / _4 / _6 / _8, plus the full invoice_fields (10)
+  # above, form a NESTED sequence over a fixed field order (interleaving
+  # known-easy and known-hard fields so hard fields aren't all clustered
+  # at the end):
+  #
+  #   1. invoice_number   (easy)   6. customer_name  (hard)
+  #   2. issue_date       (hard)   7. currency       (easy)
+  #   3. vendor_name      (easy)   8. subtotal       (hard)
+  #   4. vendor_tax_id    (hard)   9. due_date       (easy)
+  #   5. total_amount     (easy)  10. tax_amount      (hard)
+  #
+  # Every field in invoice_fields_2 is also in invoice_fields_4, which is
+  # also in invoice_fields_6, etc. — so growing the schema only ever ADDS
+  # fields, never swaps which ones, isolating "field count" from "which
+  # specific fields" as cleanly as a fixed order allows. See
+  # docs/ARCHITECTURE.md#controlled-experiments.
+  #
+  # NOTE: invoice_fields_reduced (above) is a DIFFERENT selection (the 5
+  # hardest fields specifically) — don't treat it as part of this nested
+  # sequence when plotting the degradation curve.
+
+  invoice_fields_2:
+    description: >
+      Extract ONLY these 2 fields from the invoice — do not return any
+      other field: invoice_number, issue_date.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        issue_date: { type: string }
+      required: [invoice_number, issue_date]
+
+  invoice_fields_4:
+    description: >
+      Extract ONLY these 4 fields from the invoice — do not return any
+      other field: invoice_number, issue_date, vendor_name, vendor_tax_id.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        issue_date: { type: string }
+        vendor_name: { type: string }
+        vendor_tax_id: { type: string }
+      required: [invoice_number, issue_date, vendor_name, vendor_tax_id]
+
+  invoice_fields_6:
+    description: >
+      Extract ONLY these 6 fields from the invoice — do not return any
+      other field: invoice_number, issue_date, vendor_name, vendor_tax_id,
+      total_amount, customer_name.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        issue_date: { type: string }
+        vendor_name: { type: string }
+        vendor_tax_id: { type: string }
+        total_amount: { type: number }
+        customer_name: { type: string }
+      required: [invoice_number, issue_date, vendor_name, vendor_tax_id, total_amount, customer_name]
+
+  invoice_fields_8:
+    description: >
+      Extract ONLY these 8 fields from the invoice — do not return any
+      other field: invoice_number, issue_date, vendor_name, vendor_tax_id,
+      total_amount, customer_name, currency, subtotal.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        issue_date: { type: string }
+        vendor_name: { type: string }
+        vendor_tax_id: { type: string }
+        total_amount: { type: number }
+        customer_name: { type: string }
+        currency: { type: string }
+        subtotal: { type: number }
+      required: [invoice_number, issue_date, vendor_name, vendor_tax_id, total_amount, customer_name, currency, subtotal]
 
   contract_entities:
     description: Extract key named entities from a legal contract (e.g. NDA).

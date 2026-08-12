@@ -48,15 +48,21 @@ def load_dataset(
     """Load a dataset by id, returning normalized DocumentSample objects.
 
     Each loader module (src/slmbench/datasets/loaders/<loader>.py) must
-    expose a `load(raw_dir, split, limit) -> list[DocumentSample]` function.
-    See docs/ADDING_A_DATASET.md for the contract.
+    expose a `load(raw_dir, split, limit, dataset_id, task_id) -> list[DocumentSample]`
+    function. See docs/ADDING_A_DATASET.md for the contract.
     """
     cfg = get_dataset_config(dataset_id)
     loader_name = cfg["loader"]
+    task_id = cfg["task"]
     module = importlib.import_module(f"slmbench.datasets.loaders.{loader_name}")
 
     raw_dir = raw_dir or Path("data/raw") / dataset_id
-    if not raw_dir.exists():
+
+    if cfg.get("generated"):
+        # Generated datasets (e.g. the synthetic PT-BR invoices) create
+        # their own raw_dir on first use — nothing to download beforehand.
+        raw_dir.mkdir(parents=True, exist_ok=True)
+    elif not raw_dir.exists():
         raise FileNotFoundError(
             f"Raw data for '{dataset_id}' not found at {raw_dir}.\n"
             f"Run: python scripts/download_datasets.py --dataset {dataset_id}\n"
@@ -65,4 +71,6 @@ def load_dataset(
             f"in configs/datasets.yaml)"
         )
 
-    return module.load(raw_dir=raw_dir, split=split, limit=limit, dataset_id=dataset_id)
+    return module.load(
+        raw_dir=raw_dir, split=split, limit=limit, dataset_id=dataset_id, task_id=task_id
+    )

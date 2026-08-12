@@ -19,6 +19,7 @@ def load(
     split: str,
     limit: int | None,
     dataset_id: str,
+    task_id: str,
 ) -> list[DocumentSample]:
     raise NotImplementedError(
         "Loader for 'docvqa' is not implemented yet. "

@@ -57,6 +57,7 @@ def run_cmd(
     multimodal: list[str] = typer.Option(None, help="Restrict to these multimodal model ids"),
     text_slm: list[str] = typer.Option(None, help="Restrict to these text_ocr SLM ids"),
     ocr_engine: list[str] = typer.Option(None, help="Restrict to these OCR engine ids"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress per-field mismatch details"),
 ) -> None:
     console.print(f"[bold]Loading dataset[/bold] {dataset} (split={split}, limit={limit})")
     samples = load_dataset(dataset, split=split, limit=limit)
@@ -89,6 +90,13 @@ def run_cmd(
             console.print(f"    {status} {sample.sample_id}  f1={score.field_f1:.2f}"
                           f"  ({result.latency_seconds:.1f}s)"
                           + (f"  [red]{result.error}[/red]" if result.error else ""))
+
+            mismatches = [f for f in score.field_scores if not f.match]
+            if mismatches and result.json_valid and not quiet:
+                for f in mismatches:
+                    console.print(
+                        f"        [dim]· {f.field}: got {f.predicted!r}, expected {f.expected!r}[/dim]"
+                    )
 
     summary = aggregate(all_scores)
     _print_summary_table(summary)

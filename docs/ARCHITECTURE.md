@@ -78,6 +78,34 @@ text_ocr baseline, the natural extension point is
 layout-annotated text (e.g. tab-separated columns reconstructed from boxes)
 and feed that through `text_ocr/extractor.py` instead.
 
+## Controlled experiments
+
+Sometimes you want to isolate one variable while holding the underlying
+document fixed — e.g. "do small models drop these specific fields because
+they're inherently hard, or because they're competing with 5 other fields
+in the same schema?" The pattern for this:
+
+1. Add a second task in `configs/tasks.yaml` with a narrower schema (see
+   `invoice_fields_reduced`).
+2. Register a second dataset entry pointing at the **same loader** with the
+   new `task:` (see `synthetic_invoices_ptbr_reduced`).
+3. Make sure the loader filters `ground_truth` down to
+   `get_schema(task_id)["properties"].keys()` and sets
+   `DocumentSample.task_id` from the passed-in `task_id` rather than
+   hardcoding it — this is exactly what `loaders/synthetic.py` does, and
+   it's why the same rng seed produces byte-identical underlying documents
+   across both dataset ids, differing only in which fields are scored.
+
+Run both and compare field-level F1 for the shared fields — a jump when
+isolated points to schema/field-count fatigue; no change points to a
+genuine per-field extraction limitation.
+
+This pattern extends naturally to more than two points: `invoice_fields_2`
+/ `_4` / `_6` / `_8` (plus the full 10-field `invoice_fields`) form a
+nested sequence over one fixed field order, giving a full degradation
+curve instead of a single before/after comparison — see the "field-count
+degradation curve" section in the README for how to run and plot it.
+
 ## Why Ollama AND transformers?
 
 - **Ollama** — the easiest path for anyone without a Python ML background

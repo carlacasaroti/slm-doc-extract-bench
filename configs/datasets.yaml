@@ -81,6 +81,7 @@ datasets:
     domain: invoices
     task: invoice_fields
     loader: synthetic
+    generated: true
     source: generated locally via scripts/generate_synthetic_docs.py
     license: n/a (generated)
     n_samples: configurable
@@ -88,3 +89,60 @@ datasets:
       Templated PT-BR invoices/receipts with known ground truth — useful for
       controlled ablations (rotation, noise, font, layout perturbations)
       without depending on external downloads.
+
+  - id: synthetic_invoices_ptbr_reduced
+    domain: invoices
+    task: invoice_fields_reduced
+    loader: synthetic
+    generated: true
+    source: generated locally via scripts/generate_synthetic_docs.py
+    license: n/a (generated)
+    n_samples: configurable
+    notes: >
+      SAME underlying documents as synthetic_invoices_ptbr (same rng seed),
+      but only 5 fields are requested. Compare results against
+      synthetic_invoices_ptbr to isolate "model drops these fields because
+      they're hard" vs. "model drops them because 10 fields is too many at
+      once" — see docs/ARCHITECTURE.md#controlled-experiments.
+
+  # --- Field-count degradation curve (see configs/tasks.yaml for the
+  # fixed nested field order) — same documents, 2/4/6/8 fields requested.
+  - id: synthetic_invoices_ptbr_2f
+    domain: invoices
+    task: invoice_fields_2
+    loader: synthetic
+    generated: true
+    source: generated locally
+    license: n/a (generated)
+    n_samples: configurable
+    notes: Field-count curve, point 1/5 (2 fields). Same documents as synthetic_invoices_ptbr.
+
+  - id: synthetic_invoices_ptbr_4f
+    domain: invoices
+    task: invoice_fields_4
+    loader: synthetic
+    generated: true
+    source: generated locally
+    license: n/a (generated)
+    n_samples: configurable
+    notes: Field-count curve, point 2/5 (4 fields). Same documents as synthetic_invoices_ptbr.
+
+  - id: synthetic_invoices_ptbr_6f
+    domain: invoices
+    task: invoice_fields_6
+    loader: synthetic
+    generated: true
+    source: generated locally
+    license: n/a (generated)
+    n_samples: configurable
+    notes: Field-count curve, point 3/5 (6 fields). Same documents as synthetic_invoices_ptbr.
+
+  - id: synthetic_invoices_ptbr_8f
+    domain: invoices
+    task: invoice_fields_8
+    loader: synthetic
+    generated: true
+    source: generated locally
+    license: n/a (generated)
+    n_samples: configurable
+    notes: Field-count curve, point 4/5 (8 fields). Same documents as synthetic_invoices_ptbr.
