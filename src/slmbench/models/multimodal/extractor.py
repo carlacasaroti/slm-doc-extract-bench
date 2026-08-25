@@ -1,9 +1,8 @@
 """Multimodal extractor: the model reads the document image directly.
 
 One extractor instance wraps one entry from configs/models.yaml's
-`multimodal` list. The backend (ollama / transformers) is resolved from
-that config entry, so adding a new VLM is usually just a new YAML entry —
-see docs/ADDING_A_MODEL.md.
+`multimodal` list. The backend (ollama / transformers / anthropic) is
+resolved from that config entry.
 """
 
 from __future__ import annotations
@@ -12,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from slmbench.models.base import BaseExtractor
-from slmbench.models.runtime import ollama_backend, transformers_backend
+from slmbench.models.runtime import anthropic_backend, ollama_backend, transformers_backend
 
 
 class MultimodalExtractor(BaseExtractor):
@@ -37,10 +36,16 @@ class MultimodalExtractor(BaseExtractor):
                 prompt=prompt,
                 image_path=image_path,
             )
+        if self.backend == "anthropic":
+            return anthropic_backend.generate_vision(
+                model_id=self.backend_kwargs["anthropic_model"],
+                prompt=prompt,
+                image_path=image_path,
+                json_schema=schema,
+            )
         raise ValueError(
             f"Unsupported backend '{self.backend}' for model '{self.model_id}'. "
-            f"Supported: ollama, transformers. llama_cpp is planned — see "
-            f"docs/ADDING_A_MODEL.md if you want to contribute it."
+            f"Supported: ollama, transformers, anthropic."
         )
 
     @classmethod
