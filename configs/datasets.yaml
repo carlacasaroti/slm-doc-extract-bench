@@ -146,3 +146,57 @@ datasets:
     license: n/a (generated)
     n_samples: configurable
     notes: Field-count curve, point 4/5 (8 fields). Same documents as synthetic_invoices_ptbr.
+
+  - id: real_waste_invoices
+    domain: invoices
+    task: waste_invoice_fields
+    loader: real_pdf
+    source: local PDFs in data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Real US waste-management invoices (PDF), page 1 rasterized to PNG.
+
+  - id: real_waste_invoices_2f
+    domain: invoices
+    task: waste_invoice_fields_2
+    loader: real_pdf
+    source: symlink to data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Field-count curve on real invoices — 2 fields.
+
+  - id: real_waste_invoices_4f
+    domain: invoices
+    task: waste_invoice_fields_4
+    loader: real_pdf
+    source: symlink to data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Field-count curve on real invoices — 4 fields.
+
+  - id: real_waste_invoices_6f
+    domain: invoices
+    task: waste_invoice_fields_6
+    loader: real_pdf
+    source: symlink to data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Field-count curve on real invoices — 6 fields.
+
+  - id: real_waste_invoices_7f
+    domain: invoices
+    task: waste_invoice_fields_7
+    loader: real_pdf
+    source: symlink to data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Field-count curve on real invoices — 7 fields (all scalars).
+
+  - id: real_waste_invoices_5f
+    domain: invoices
+    task: waste_invoice_fields_5
+    loader: real_pdf
+    source: symlink to data/raw/real_waste_invoices/
+    license: proprietary (do not redistribute)
+    n_samples: 2
+    notes: Field-count curve on real invoices — 5 fields (4f + vendor_name).
