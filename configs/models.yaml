@@ -77,6 +77,12 @@ multimodal:
       engine rather than an instruction-following extractor. Very strong at
       table/structure parsing.
 
+  - id: claude-opus-5
+    backend: anthropic
+    anthropic_model: claude-opus-5
+    params: cloud (frontier)
+    notes: Claude Opus 5 via Anthropic API — cloud ceiling reference. Needs ANTHROPIC_API_KEY.
+
 text_ocr:
   ocr_engines:
     - id: tesseract

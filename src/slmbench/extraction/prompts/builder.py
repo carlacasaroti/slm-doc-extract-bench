@@ -21,8 +21,17 @@ no markdown fences, no extra text before or after the JSON:
 
 {schema}
 
-If a field is not present in the document, use null rather than guessing.
-Numbers must be plain numbers (no currency symbols, no thousands separators).
+Rules:
+- If a field is not present in the document, use null rather than guessing.
+- Numbers must be plain numbers (no currency symbols, no thousands separators).
+- Convert every date to ISO 8601 (YYYY-MM-DD) no matter how it is printed.
+  US numeric dates are month/day/year, e.g. "12/17/25" -> "2025-12-17",
+  "Feb 1, 2026" -> "2026-02-01".
+- For array fields, return one entry per row of the source table, in the
+  order they appear top to bottom. Do NOT deduplicate rows and do NOT add
+  rows: if the same value appears on three rows, the array has three entries.
+  Each entry holds only the value for that column — a description entry is the
+  item text alone, with no quantities, unit prices, or totals.
 """
 
 

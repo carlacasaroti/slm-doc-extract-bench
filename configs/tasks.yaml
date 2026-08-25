@@ -192,3 +192,92 @@ tasks:
       properties:
         answer: { type: string }
       required: [answer]
+
+  waste_invoice_fields:
+    description: >
+      Extract header, totals and the line-item table from a waste-management
+      invoice. vendor_name is the hauler/company issuing the invoice and
+      receiving payment; customer_name is the party being billed. product_dates
+      and product_descriptions are the per-row Date and Description columns of
+      the line-item table, in the same order they appear.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        date: { type: string, description: "Issue date of the invoice" }
+        due_date: { type: string }
+        vendor_name: { type: string }
+        customer_name: { type: string }
+        customer_number: { type: string }
+        total_amount: { type: number }
+        product_dates:
+          type: array
+          items: { type: string }
+          description: "Table dates related to products in Description"
+        product_descriptions:
+          type: array
+          items: { type: string }
+          description: "Product/line-item descriptions from the table"
+      required: [invoice_number, vendor_name, total_amount]
+
+  # --- Real waste-invoice field-count curve (same PDFs, growing scalar
+  # field set, fixed nested order). Lists (product_*) excluded on purpose:
+  # they are uniformly hard and would confound the field-count effect.
+  waste_invoice_fields_2:
+    description: Extract these fields from a waste-management invoice.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        customer_name: { type: string }
+      required: [invoice_number]
+
+  waste_invoice_fields_4:
+    description: Extract these fields from a waste-management invoice.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        customer_name: { type: string }
+        total_amount: { type: number }
+        customer_number: { type: string }
+      required: [invoice_number, total_amount]
+
+  waste_invoice_fields_6:
+    description: Extract these fields from a waste-management invoice.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        customer_name: { type: string }
+        total_amount: { type: number }
+        customer_number: { type: string }
+        vendor_name: { type: string }
+        date: { type: string, description: "Issue date of the invoice" }
+      required: [invoice_number, vendor_name, total_amount]
+
+  waste_invoice_fields_7:
+    description: Extract these fields from a waste-management invoice.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        customer_name: { type: string }
+        total_amount: { type: number }
+        customer_number: { type: string }
+        vendor_name: { type: string }
+        date: { type: string, description: "Issue date of the invoice" }
+        due_date: { type: string }
+      required: [invoice_number, vendor_name, total_amount]
+
+  waste_invoice_fields_5:
+    description: Extract these fields from a waste-management invoice.
+    schema:
+      type: object
+      properties:
+        invoice_number: { type: string }
+        customer_name: { type: string }
+        total_amount: { type: number }
+        customer_number: { type: string }
+        vendor_name: { type: string }
+      required: [invoice_number, vendor_name, total_amount]
