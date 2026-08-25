@@ -125,6 +125,107 @@ docs/                architecture + contribution guides
 results/             leaderboard.md + per-run JSON (gitignored except leaderboard)
 ```
 
+## Reproducing the real-document (PDF invoice) experiments
+
+The synthetic dataset needs no setup. To benchmark on your **own real
+documents** (e.g. scanned or digital PDF invoices), follow the steps below —
+this is the exact workflow behind the `real_waste_invoices` dataset:
+multimodal VLM vs OCR+SLM vs a cloud LLM, plus a field-count curve.
+
+### 1. Extra dependencies
+
+```bash
+# PDF -> image rasterization (required)
+pip install pymupdf
+
+# Tesseract OCR (required for the text_ocr family) — system binary:
+#   macOS:  brew install tesseract
+#   Ubuntu: sudo apt-get install tesseract-ocr
+
+# EasyOCR (optional, layout-robust alternative OCR). Pin numpy/opencv so the
+# PyTorch/OpenCV wheels stay on a compatible NumPy 1.x build:
+pip install easyocr "numpy==1.26.4" "opencv-python==4.9.0.80" "opencv-python-headless==4.9.0.80"
+
+# Cloud LLM (optional, Anthropic Claude as a ceiling reference):
+pip install anthropic
+export ANTHROPIC_API_KEY="sk-ant-..."   # your key; note the image is sent to the API
+```
+
+### 2. Add your documents
+
+Drop each PDF and its ground-truth JSON (same basename) into
+`data/raw/real_waste_invoices/`:
+
+```
+data/raw/real_waste_invoices/
+  my_invoice_001.pdf
+  my_invoice_001.json    # ground truth matching the task schema
+  ...
+```
+
+The `real_pdf` loader rasterizes page 1 to a cached PNG on first run and
+filters each ground-truth JSON to the fields the task requests. Target
+fields are defined by the `waste_invoice_fields` task in
+`configs/tasks.yaml` — edit it to match your documents.
+
+### 3. Run the comparisons
+
+```bash
+# Start Ollama and pull the local models (once):
+ollama serve &
+ollama pull qwen2.5:3b
+ollama pull qwen2.5vl:3b
+
+# OCR + text SLM — Tesseract vs EasyOCR, model held fixed:
+slmbench run --dataset real_waste_invoices --multimodal none \
+  --text-slm qwen2.5-3b --ocr-engine tesseract --ocr-engine easyocr
+
+# Local multimodal VLM (full-page image; allow more time on CPU):
+SLMBENCH_OLLAMA_TIMEOUT=600 slmbench run --dataset real_waste_invoices \
+  --multimodal qwen2.5-vl-3b --text-slm none
+
+# Cloud LLM ceiling (Claude):
+slmbench run --dataset real_waste_invoices --multimodal claude-opus-5 --text-slm none
+
+# Read results:
+cat results/leaderboard.md
+```
+
+`--multimodal none` / `--text-slm none` is a convenience: an unknown id
+disables that whole family, so you can run one family at a time.
+
+### 4. Field-count degradation curve (optional)
+
+Same PDFs, growing scalar field set — isolates "how many fields" from "which
+fields". The curve datasets share the base data dir via symlinks:
+
+```bash
+for n in 2f 4f 5f 6f 7f; do
+  ln -sfn real_waste_invoices "data/raw/real_waste_invoices_$n"
+done
+
+for d in real_waste_invoices_2f real_waste_invoices_4f real_waste_invoices_5f \
+         real_waste_invoices_6f real_waste_invoices_7f; do
+  slmbench run --dataset "$d" --multimodal none --text-slm qwen2.5-3b --ocr-engine tesseract
+done
+```
+
+### Tunable environment variables
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `SLMBENCH_OLLAMA_TIMEOUT` | 300 | HTTP timeout (s) for Ollama — raise for slow CPU VLM runs |
+| `SLMBENCH_OLLAMA_NUM_CTX` | 8192 | Ollama context window — raise if a full-page image overflows it |
+| `SLMBENCH_VLM_MAX_DIM` | 1400 | Longest edge (px) the VLM image is downscaled to — raise for small text |
+| `SLMBENCH_ANTHROPIC_MAX_TOKENS` | 8192 | Max output tokens for the Anthropic backend |
+
+> **Reproducibility note:** all backends set `temperature: 0`, but on CPU that
+> does not fully guarantee determinism (parallel float-reduction order can flip
+> near-tied tokens). For stable numbers, run each configuration several times
+> and/or set `OLLAMA_NUM_THREADS=1` — and label enough documents (n=2 is a
+> smoke test, not a measurement).
+
+
 ## Contributing
 
 PRs adding a dataset loader, a model config entry, or a new metric are all
