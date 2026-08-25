@@ -74,3 +74,157 @@ this header back in, since `write_report` only *appends*).
 |---|---|---|---|---|---|
 | qwen2.5-vl-3b | 1.000 | 1.000 | 100.0% | 84.14 | 106.37 |
 | tesseract+qwen2.5-3b | 1.000 | 1.000 | 100.0% | 12.68 | 24.18 |
+
+## real_waste_invoices — run `20260821T132806Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-0.5b | 0.350 | 0.000 | 100.0% | 6.03 | 8.06 |
+
+## real_waste_invoices — run `20260821T190044Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-0.5b | 0.278 | 0.000 | 100.0% | 8.01 | 10.41 |
+
+## real_waste_invoices — run `20260821T192049Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-0.5b | 0.167 | 0.000 | 100.0% | 8.25 | 10.49 |
+
+## real_waste_invoices — run `20260821T201107Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| qwen2.5-vl-3b | 0.833 | 0.000 | 100.0% | 337.84 | 461.16 |
+
+## real_waste_invoices — run `20260821T201924Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.611 | 0.000 | 100.0% | 32.07 | 35.05 |
+
+## real_waste_invoices — run `20260821T202541Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.444 | 0.000 | 100.0% | 29.18 | 31.47 |
+
+## real_waste_invoices — run `20260821T202920Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 28.23 | 29.99 |
+
+## real_waste_invoices — run `20260825T124924Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.611 | 0.000 | 100.0% | 26.46 | 29.39 |
+| easyocr+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 40.61 | 44.27 |
+
+## real_waste_invoices — run `20260825T125536Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 15.87 | 16.74 |
+| easyocr+qwen2.5-3b | 0.389 | 0.000 | 100.0% | 33.52 | 40.91 |
+
+## real_waste_invoices — run `20260825T130634Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 29.85 | 32.43 |
+| easyocr+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 40.40 | 44.34 |
+
+## real_waste_invoices_2f — run `20260825T131305Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.750 | 0.500 | 100.0% | 14.69 | 18.41 |
+
+## real_waste_invoices_4f — run `20260825T131335Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.875 | 0.500 | 100.0% | 14.68 | 15.99 |
+
+## real_waste_invoices_6f — run `20260825T131406Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.583 | 0.000 | 100.0% | 15.27 | 17.33 |
+
+## real_waste_invoices_7f — run `20260825T131439Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.643 | 0.000 | 100.0% | 15.98 | 17.94 |
+
+## real_waste_invoices_4f — run `20260825T131723Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.875 | 0.500 | 100.0% | 5.27 | 5.71 |
+
+## real_waste_invoices_6f — run `20260825T131736Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.583 | 0.000 | 100.0% | 5.32 | 5.44 |
+
+## real_waste_invoices_5f — run `20260825T132307Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 16.78 | 17.42 |
+
+## real_waste_invoices_2f — run `20260825T132527Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.750 | 0.500 | 100.0% | 4.14 | 4.24 |
+| easyocr+qwen2.5-3b | 0.750 | 0.500 | 100.0% | 34.89 | 40.22 |
+
+## real_waste_invoices_4f — run `20260825T132642Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| tesseract+qwen2.5-3b | 0.875 | 0.500 | 100.0% | 5.05 | 5.08 |
+| easyocr+qwen2.5-3b | 0.750 | 0.500 | 100.0% | 31.63 | 33.85 |
+
+## real_waste_invoices_5f — run `20260825T132816Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| easyocr+qwen2.5-3b | 0.800 | 0.500 | 100.0% | 37.88 | 41.92 |
+| tesseract+qwen2.5-3b | 0.700 | 0.000 | 100.0% | 8.48 | 9.20 |
+
+## real_waste_invoices_6f — run `20260825T132941Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| easyocr+qwen2.5-3b | 0.667 | 0.000 | 100.0% | 36.00 | 36.18 |
+| tesseract+qwen2.5-3b | 0.583 | 0.000 | 100.0% | 5.84 | 5.90 |
+
+## real_waste_invoices_7f — run `20260825T133221Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| easyocr+qwen2.5-3b | 0.857 | 0.500 | 100.0% | 71.46 | 78.27 |
+| tesseract+qwen2.5-3b | 0.643 | 0.000 | 100.0% | 7.75 | 8.17 |
+
+## real_waste_invoices — run `20260825T175304Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| qwen2.5-vl-3b | 0.833 | 0.000 | 100.0% | 185.52 | 192.05 |
+| tesseract+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 30.54 | 36.21 |
+| easyocr+qwen2.5-3b | 0.500 | 0.000 | 100.0% | 42.11 | 49.01 |
+
+## real_waste_invoices — run `20260825T190137Z`
+
+| Model | Field F1 | Exact Match | JSON Valid % | Mean Latency (s) | p95 Latency (s) |
+|---|---|---|---|---|---|
+| claude-opus-5 | 0.889 | 0.000 | 100.0% | 7.82 | 10.63 |
